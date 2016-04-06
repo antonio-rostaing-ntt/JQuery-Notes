@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="prueba" content="prueba">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Antonio Rostaing">
+  <title>jQuery. DOM manipulation.</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="./normalize.css">
+  <link rel="stylesheet" href="./jQuery.css">
+</head>
+<body>
+<header>
+<h1 class="title">jQuery. DOM manipulation.</h1>
+<h2 class="author">Antonio Rostaing</h2>
+<h3 class="date">January, 2014</h3>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#chapter-1-introduction-to-jquery">Chapter 1: Introduction to jQuery</a><ul>
+<li><a href="#what-is-jquery">What is jQuery?</a><ul>
+<li><a href="#element-selector">Element Selector</a></li>
+<li><a href="#using-the-jquery-function-to-find-nodes">Using the jQuery function to find nodes</a></li>
+<li><a href="#the-text-method.-changing-text.">The text() Method. Changing text.</a></li>
+<li><a href="#dom-ready">DOM Ready</a></li>
+</ul></li>
+<li><a href="#using-jquery">Using jQuery</a><ul>
+<li><a href="#modifying-multiple-elements">Modifying Multiple Elements</a></li>
+<li><a href="#id-selector-class-selector">ID Selector &amp; Class Selector</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#chapter-2-traversing-the-dom">Chapter 2: Traversing the DOM</a><ul>
+<li><a href="#searching-the-dom">Searching the DOM</a></li>
+<li><a href="#traversing-filtering">Traversing: filtering</a></li>
+<li><a href="#traversing-walking-the-dom.">Traversing: Walking the DOM.</a></li>
+</ul></li>
+<li><a href="#chapter-3-working-with-the-dom">Chapter 3: Working with the DOM</a><ul>
+<li><a href="#manipulating-the-dom">Manipulating the DOM</a><ul>
+<li><a href="#appending-to-the-dom">Appending to the DOM</a></li>
+<li><a href="#removing-from-the-dom">Removing from the DOM</a></li>
+</ul></li>
+<li><a href="#acting-on-interaction">Acting on Interaction</a><ul>
+<li><a href="#tackling-the-html">Tackling the HTML</a></li>
+<li><a href="#watching-for-click">Watching for Click</a></li>
+<li><a href="#class-manipulation">Class manipulation</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#chapter-4-listening-to-dom-events">Chapter 4: Listening to DOM events</a><ul>
+<li><a href="#show-and-hide">Show and Hide</a></li>
+<li><a href="#mouse-events">Mouse events</a></li>
+<li><a href="#keyboard-events">Keyboard events</a></li>
+<li><a href="#form-events">Form events</a></li>
+<li><a href="#lynk-layover">Lynk Layover</a></li>
+</ul></li>
+<li><a href="#chapter-5-css-manipulation">Chapter 5: CSS manipulation</a><ul>
+<li><a href="#taming-css">Taming CSS</a><ul>
+<li><a href="#changing-the-style">Changing the style</a></li>
+<li><a href="#moving-styles-to-external-css">Moving Styles to external CSS</a></li>
+</ul></li>
+<li><a href="#animation">Animation</a><ul>
+<li><a href="#adding-movement">Adding Movement</a></li>
+<li><a href="#changing-the-speed">Changing the speed</a></li>
+<li><a href="#moving-animations-to-external-css">Moving Animations to external CSS</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#references">References</a></li>
+</ul>
+</nav>
+<article title="Introduction to jQuery" class="static-content">
+
+<h1 id="chapter-1-introduction-to-jquery">Chapter 1: Introduction to jQuery</h1>
+<h2 id="what-is-jquery">What is jQuery?</h2>
+<p>What you can do with jQuery:</p>
+<ul>
+<li>reveal interface elements<br /></li>
+<li>change content based on user actions<br /></li>
+<li>toggle CSS classes to highlight an element</li>
+</ul>
+<p>jQuery make it easy to:</p>
+<ul>
+<li><strong>find</strong> elements in an HTML document</li>
+<li><strong>change</strong> HTML content</li>
+<li><strong>listen</strong> to what a user does and react accordingly</li>
+<li><strong>animate</strong> content on the page</li>
+<li><strong>talk</strong> over the network to fetch new content</li>
+</ul>
+<h3 id="element-selector">Element Selector</h3>
+<p>Basic jQuery usage:<br /><code>jQuery(&lt;code&gt;);</code></p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">jQuery</span>(document); <span class="co">//document -&gt; DOM</span></code></pre>
+<p>But how can we search through the DOM?</p>
+<h3 id="using-the-jquery-function-to-find-nodes">Using the jQuery function to find nodes</h3>
+<p>Selecting by HTML element name…</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">jQuery</span>(<span class="st">&quot;h1&quot;</span>);
+<span class="fu">$</span>(<span class="st">&quot;h1&quot;</span>);
+
+<span class="fu">jQuery</span>(<span class="st">&quot;p&quot;</span>);
+<span class="fu">$</span>(<span class="st">&quot;p&quot;</span>);</code></pre>
+<h3 id="the-text-method.-changing-text.">The text() Method. Changing text.</h3>
+<p>Fetching an element’s text…</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;h1&quot;</span>).<span class="fu">text</span>()</code></pre>
+<p>Modifying an element’s text…</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;h1&quot;</span>).<span class="fu">text</span>(<span class="st">&quot;Where to?&quot;</span>);</code></pre>
+<h3 id="dom-ready">DOM Ready</h3>
+<p>JavaScript may execute before the DOM loads.<br />We need to make sure the DOM has finished loading the HTML content before we can reliably use jQuery.<br />How can we listen for this signal? Listening for document ready…</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">jQuery</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>(){
+
+  <span class="co">//Will only run this code once the DOM is “ready”</span>
+
+});</code></pre>
+<h2 id="using-jquery">Using jQuery</h2>
+<ul>
+<li>Download jQuery</li>
+<li><p>Load it in your HTML document</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">&lt;script src=<span class="st">&quot;jquery.min.js&quot;</span>&gt;&lt;<span class="ot">/script&gt;</span></code></pre></li>
+<li><p>Start using it</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">&lt;script src=<span class="st">&quot;application.js&quot;</span>&gt;&lt;<span class="ot">/script&gt;</span></code></pre></li>
+</ul>
+<h3 id="modifying-multiple-elements">Modifying Multiple Elements</h3>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Select all &lt;li&gt; elements</span>
+<span class="fu">$</span>(<span class="st">&quot;li&quot;</span>);
+
+<span class="co">// Modifying each of their text nodes</span>
+<span class="fu">$</span>(<span class="st">&quot;li&quot;</span>).<span class="fu">text</span>(<span class="st">&quot;New text&quot;</span>);</code></pre>
+<h3 id="id-selector-class-selector">ID Selector &amp; Class Selector</h3>
+<p>We can find elements by <strong>ID</strong> or <strong>Class</strong></p>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Select</th>
+<th style="text-align: left;">CSS</th>
+<th style="text-align: left;">jQuery</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">by node type</td>
+<td style="text-align: left;">p { … }</td>
+<td style="text-align: left;">$(“p”);</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">by ID</td>
+<td style="text-align: left;">#container { … }</td>
+<td style="text-align: left;">$(“#container”);</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">by class</td>
+<td style="text-align: left;">.articles { … }</td>
+<td style="text-align: left;">$(“.articles”);</td>
+</tr>
+</tbody>
+</table>
+<!--/figure-->
+
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Where do you want to go?<span class="kw">&lt;/h1&gt;</span>
+<span class="kw">&lt;h2&gt;</span>Travel Destinations<span class="kw">&lt;/h2&gt;</span>
+<span class="kw">&lt;p&gt;</span>Plan your next adventure.<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;ul</span><span class="ot"> id=</span><span class="st">&quot;destinations&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Rome<span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Paris<span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;li</span><span class="ot"> class=</span><span class="st">&#39;promo&#39;</span><span class="kw">&gt;</span>Rio<span class="kw">&lt;/li&gt;</span>
+<span class="kw">&lt;/ul&gt;</span></code></pre>
+<p>Selecting by unique ID:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;#destinations&quot;</span>);</code></pre>
+<p>Selecting by Class Name:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;.promo&quot;</span>);</code></pre>
+</article>
+
+<article title="Traversing the DOM" class="static-content">
+<h1 id="chapter-2-traversing-the-dom">Chapter 2: Traversing the DOM</h1>
+<h2 id="searching-the-dom">Searching the DOM</h2>
+<p>Descendant Selector:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// $(&quot;parent descendant&quot;)  </span>
+<span class="fu">$</span>(<span class="st">&quot;#destinations li&quot;</span>);</code></pre>
+<p>Selecting only direct children:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// $(&quot;parent &gt; children&quot;)  </span>
+<span class="fu">$</span>(<span class="st">&quot;#destinations &gt; li&quot;</span>);</code></pre>
+<p>Selecting multiple elements:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Where do you want to go?<span class="kw">&lt;/h1&gt;</span>
+<span class="kw">&lt;h2&gt;</span>Travel Destinations<span class="kw">&lt;/h2&gt;</span>
+<span class="kw">&lt;p&gt;</span>Plan your next adventure.<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;ul</span><span class="ot"> id=</span><span class="st">&quot;destinations&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;li&gt;</span>Rome<span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;li&gt;</span>
+    <span class="kw">&lt;ul</span><span class="ot"> id=</span><span class="st">&quot;france&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;li&gt;</span>Paris<span class="kw">&lt;/li&gt;</span>
+    <span class="kw">&lt;/ul&gt;</span>
+  <span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;li</span><span class="ot"> class=</span><span class="st">&#39;promo&#39;</span><span class="kw">&gt;</span>Rio<span class="kw">&lt;/li&gt;</span>
+<span class="kw">&lt;/ul&gt;</span></code></pre>
+<p>How do we find only elements with either a <em>“promo”</em> class or a <em>“france”</em> ID?</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;.promo, #france&quot;</span>); <span class="co">// The comma matters</span></code></pre>
+<p>Filters:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;#destinations li:first&quot;</span>);
+<span class="fu">$</span>(<span class="st">&quot;#destinations li:last&quot;</span>);
+<span class="fu">$</span>(<span class="st">&quot;#destinations li:odd&quot;</span>);  <span class="co">// watch out, the index starts at 0</span>
+<span class="fu">$</span>(<span class="st">&quot;#destinations li:even&quot;</span>);</code></pre>
+<h2 id="traversing-filtering">Traversing: filtering</h2>
+<p>Filtering by traversing: It takes a bit more code, but it’s faster</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;#destinations li&quot;</span>);
+<span class="co">// -&gt;</span>
+<span class="fu">$</span>(<span class="st">&quot;#destinations&quot;</span>).<span class="fu">find</span>(<span class="st">&quot;li&quot;</span>);</code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;#destinations &gt; li&quot;</span>);
+<span class="co">// -&gt;</span>
+<span class="fu">$</span>(<span class="st">&quot;#destinations&quot;</span>).<span class="fu">children</span>(<span class="st">&quot;li&quot;</span>);</code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;li:first&quot;</span>);
+<span class="co">// -&gt;</span>
+<span class="fu">$</span>(<span class="st">&quot;li&quot;</span>).<span class="fu">first</span>();</code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;li:last&quot;</span>);
+<span class="co">// -&gt;</span>
+<span class="fu">$</span>(<span class="st">&quot;li&quot;</span>).<span class="fu">last</span>();</code></pre>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.eq()</td>
+<td style="text-align: left;">Reduce the set of matched elements to the one at the specified index.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.filter()</td>
+<td style="text-align: left;">Reduce the set of matched elements to those that match the selector or pass the function’s test.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.first()</td>
+<td style="text-align: left;">Reduce the set of matched elements to the first in the set.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.has()</td>
+<td style="text-align: left;">Reduce the set of matched elements to those that have a descendant that matches the selector or DOM element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.is()</td>
+<td style="text-align: left;">Check the current matched set of elements against a selector, element, or jQuery object and return true if at least one of these elements matches the given arguments.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.last()</td>
+<td style="text-align: left;">Reduce the set of matched elements to the final one in the set.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.map()</td>
+<td style="text-align: left;">Pass each element in the current matched set through a function, producing a new jQuery object containing the return values.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.not()</td>
+<td style="text-align: left;">Remove elements from the set of matched elements.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.slice()</td>
+<td style="text-align: left;">Reduce the set of matched elements to a subset specified by a range of indices.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+<a href="https://api.jquery.com/category/traversing/filtering"><b>jQuery documentation</b> | Category: Filtering</a>
+</figcaption>
+
+<!--/figure-->
+
+<h2 id="traversing-walking-the-dom.">Traversing: Walking the DOM.</h2>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;li&quot;</span>).<span class="fu">first</span>();
+<span class="fu">$</span>(<span class="st">&quot;li&quot;</span>).<span class="fu">first</span>().<span class="fu">next</span>();
+<span class="fu">$</span>(<span class="st">&quot;li&quot;</span>).<span class="fu">first</span>().<span class="fu">next</span>().<span class="fu">prev</span>();</code></pre>
+<p>Traversing Up: Walking up the DOM.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;li&quot;</span>).<span class="fu">first</span>();
+<span class="fu">$</span>(<span class="st">&quot;li&quot;</span>).<span class="fu">first</span>().<span class="fu">parent</span>(); <span class="co">// retur &lt;ul&gt; element</span></code></pre>
+<p>Traversing Down: Walking down the DOM. <em>children()</em>, unlike <em>find()</em>, only selects direct children</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&quot;#destinations&quot;</span>).<span class="fu">children</span>(<span class="st">&quot;li&quot;</span>); <span class="co">// return first level &lt;li&gt; elements</span></code></pre>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.children()</td>
+<td style="text-align: left;">Get the children of each element in the set of matched elements, optionally filtered by a selector.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.closest()</td>
+<td style="text-align: left;">For each element in the set, get the first element that matches the selector by testing the element itself and traversing up through its ancestors in the DOM tree.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.find()</td>
+<td style="text-align: left;">Get the descendants of each element in the current set of matched elements, filtered by a selector, jQuery object, or element.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.next()</td>
+<td style="text-align: left;">Get the immediately following sibling of each element in the set of matched elements. If a selector is provided, it retrieves the next sibling only if it matches that selector.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.nextAll()</td>
+<td style="text-align: left;">Get all following siblings of each element in the set of matched elements, optionally filtered by a selector.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.nextUntil()</td>
+<td style="text-align: left;">Get all following siblings of each element up to but not including the element matched by the selector, DOM node, or jQuery object passed.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.offsetParent()</td>
+<td style="text-align: left;">Get the closest ancestor element that is positioned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.parent()</td>
+<td style="text-align: left;">Get the parent of each element in the current set of matched elements, optionally filtered by a selector.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.parents()</td>
+<td style="text-align: left;">Get the ancestors of each element in the current set of matched elements, optionally filtered by a selector.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.parentsUntil()</td>
+<td style="text-align: left;">Get the ancestors of each element in the current set of matched elements, up to but not including the element matched by the selector, DOM node, or jQuery object.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.prev()</td>
+<td style="text-align: left;">Get the immediately preceding sibling of each element in the set of matched elements, optionally filtered by a selector.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.prevAll()</td>
+<td style="text-align: left;">Get all preceding siblings of each element in the set of matched elements, optionally filtered by a selector.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.prevUntil()</td>
+<td style="text-align: left;">Get all preceding siblings of each element up to but not including the element matched by the selector, DOM node, or jQuery object.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.siblings()</td>
+<td style="text-align: left;">Get the siblings of each element in the set of matched elements, optionally filtered by a selector.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+<a href="https://api.jquery.com/category/traversing/"><b>jQuery documentation</b> | Category: Traversing</a>
+</figcaption>
+
+<!--/figure-->
+
+</article>
+
+<article title="Working with the DOM" class="static-content">
+<h1 id="chapter-3-working-with-the-dom">Chapter 3: Working with the DOM</h1>
+<h2 id="manipulating-the-dom">Manipulating the DOM</h2>
+<h3 id="appending-to-the-dom">Appending to the DOM</h3>
+<p>Create a node (but doesn’t add it to the DOM)</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> price = <span class="fu">$</span>(<span class="st">&#39;&lt;p&gt;From $399.99&lt;/p&gt;&#39;</span>);</code></pre>
+<p>Ways to add this <em>price</em> node to the DOM</p>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">$(&lt;#node&gt;).<strong>before</strong>(&lt;elementToAppend&gt;)</td>
+<td style="text-align: left;">Puts the &lt;elementToAppend&gt; node before &lt;#node&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">$(&lt;#node).<strong>after</strong>(&lt;elementToAppend&gt;)</td>
+<td style="text-align: left;">Puts the &lt;elementToAppend&gt; node after &lt;#node&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">$(&lt;#node&gt;).<strong>prepend</strong>(&lt;elementToAppend&gt;)</td>
+<td style="text-align: left;">Adds the &lt;elementToAppend&gt; node to the top of &lt;#node&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">$(&lt;#node&gt;).<strong>append</strong>(&lt;elementToAppend&gt;)</td>
+<td style="text-align: left;">Puts the &lt;elementToAppend&gt; node at the bottom of &lt;#node&gt;</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Existing node as reference
+</figcaption>
+<!--/figure-->
+
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">$(&lt;elementToAppend&gt;).<strong>insertBefore</strong>(&lt;#node&gt;)</td>
+<td style="text-align: left;">Puts the &lt;elementToAppend&gt; node before &lt;#node&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">$(&lt;elementToAppend&gt;).<strong>insertAfter</strong>(&lt;#node&gt;)</td>
+<td style="text-align: left;">Puts the &lt;elementToAppend&gt; node after &lt;#node&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">$(&lt;elementToAppend&gt;).<strong>prependTo</strong>(&lt;#node&gt;)</td>
+<td style="text-align: left;">Adds the &lt;elementToAppend&gt; node to the top of &lt;#node&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">$(&lt;elementToAppend&gt;).<strong>appendTo</strong>(&lt;#node&gt;)</td>
+<td style="text-align: left;">Puts the &lt;elementToAppend&gt; node at the bottom of &lt;#node&gt;</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Node to append as reference
+</figcaption>
+<!--/figure-->
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>()
+
+  <span class="co">//Create a node</span>
+  <span class="kw">var</span> price = <span class="fu">$</span>(<span class="st">&#39;&lt;p&gt;From $399.99&lt;/p&gt;&#39;</span>);
+
+  <span class="co">// Puts the price node before .vacation</span>
+  <span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">before</span>(price);
+  <span class="co">// or</span>
+  <span class="ot">price</span>.<span class="fu">insertBefore</span>(<span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>));
+
+  <span class="co">// Puts the price node after .vacation</span>
+  <span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">after</span>(price);
+  <span class="co">// or</span>
+  <span class="ot">price</span>.<span class="fu">insertAfter</span>(<span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>));
+
+  <span class="co">// Adds the node to the top of .vacation</span>
+  <span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">prepend</span>(price);
+  <span class="co">// or</span>
+  <span class="ot">price</span>.<span class="fu">prependTo</span>(<span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>));
+
+  <span class="co">// Puts the price node at the bottom of .vacation</span>
+  <span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">append</span>(price);
+  <span class="co">// or</span>
+  <span class="ot">price</span>.<span class="fu">appendTo</span>(<span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>));
+
+});</code></pre>
+<h3 id="removing-from-the-dom">Removing from the DOM</h3>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">$(‘#node’).<strong>remove</strong>()</td>
+<td style="text-align: left;">Remove &lt;#node&gt;</td>
+</tr>
+</tbody>
+</table>
+<h2 id="acting-on-interaction">Acting on Interaction</h2>
+<p>jQuery Object Methods<br /><code>.on(&lt;event&gt;, &lt;event handler&gt;)</code></p>
+<p>The <event handler> function contains a reference to the object that invoke the function…<br /><code>$(this)</code></p>
+<h3 id="tackling-the-html">Tackling the HTML</h3>
+<p>All data attributes begin with ‘data-’</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li</span><span class="ot"> class=</span><span class="st">&quot;vacation onsale&quot;</span><span class="ot"> data-price=</span><span class="st">&#39;399.99&#39;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;h3&gt;</span>Hawaiian Vacation<span class="kw">&lt;/h3&gt;</span>
+  <span class="kw">&lt;button&gt;</span>Get Price<span class="kw">&lt;/button&gt;</span>
+  <span class="kw">&lt;ul</span><span class="ot"> class=</span><span class="st">&#39;comments&#39;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;li&gt;</span>Amazing deal!<span class="kw">&lt;/li&gt;</span>
+    <span class="kw">&lt;li&gt;</span>Want to go!<span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;/ul&gt;</span>
+<span class="kw">&lt;/li&gt;</span></code></pre>
+<p>jQuery Object Methods<br /><code>.data(&lt;name&gt;)</code><br /><code>.data(&lt;name&gt;, &lt;value&gt;)</code></p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">first</span>().<span class="fu">data</span>(<span class="st">&#39;price&#39;</span>);
+<span class="st">&quot;399.99&quot;</span></code></pre>
+<h3 id="watching-for-click">Watching for Click</h3>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;button&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="kw">function</span>() {
+  <span class="co">// runs when any button is clicked</span>
+});</code></pre>
+<p><strong>On With a Selector</strong><br />If we add new buttons anywhere, they will trigger this click handler.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">function</span>() {
+  <span class="co">// Only target a ‘button’ if it’s inside a ‘.vacation’.</span>
+});</code></pre>
+<h3 id="class-manipulation">Class manipulation</h3>
+<p><code>.addClass(&lt;class&gt;)</code><br /><code>.removeClass(&lt;class&gt;)</code></p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">filter</span>(<span class="st">&#39;.onsale&#39;</span>).<span class="fu">addClass</span>(<span class="st">&#39;highlighted&#39;</span>);</code></pre>
+</article>
+
+<article title="Listening to DOM events" class="static-content">
+
+<h1 id="chapter-4-listening-to-dom-events">Chapter 4: Listening to DOM events</h1>
+<h2 id="show-and-hide">Show and Hide</h2>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jsQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.slideDown()</td>
+<td style="text-align: left;">Display the matched elements with a sliding motion.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.slideToggle()</td>
+<td style="text-align: left;">Display or hide the matched elements with a sliding motion.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.slideUp()</td>
+<td style="text-align: left;">Hide the matched elements with a sliding motion.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+<a href="https://api.jquery.com/category/effects/sliding/"><b>jQuery documentation</b> | Category: Sliding</a>
+</figcaption>
+
+<!--/figure-->
+
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li</span><span class="ot"> class=</span><span class="st">&quot;confirmation&quot;</span><span class="kw">&gt;</span>
+  ...
+  <span class="kw">&lt;button&gt;</span>FLIGHT DETAILS<span class="kw">&lt;/button&gt;</span>
+  <span class="kw">&lt;ul</span><span class="ot"> class=</span><span class="st">&quot;ticket&quot;</span><span class="kw">&gt;</span>...<span class="kw">&lt;/ul&gt;</span>
+<span class="kw">&lt;/li&gt;</span></code></pre>
+<pre class="sourceCode css"><code class="sourceCode css"><span class="fl">.ticket</span> <span class="kw">{</span>
+  <span class="kw">display:</span> <span class="dt">none</span><span class="kw">;</span>
+<span class="kw">}</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">function</span>() {
+  <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">closest</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">find</span>(<span class="st">&#39;.ticket&#39;</span>).<span class="fu">slideDown</span>();
+});</code></pre>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jsQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.fadeIn()</td>
+<td style="text-align: left;">Display the matched elements by fading them to opaque.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.fadeOut()</td>
+<td style="text-align: left;">Hide the matched elements by fading them to transparent.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.fadeTo()</td>
+<td style="text-align: left;">Adjust the opacity of the matched elements.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.fadeToggle()</td>
+<td style="text-align: left;">Display or hide the matched elements by animating their opacity.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+<a href="https://api.jquery.com/category/effects/fading/"><b>jQuery documentation</b> | Category: Fading</a>
+</figcaption>
+
+<!--/figure-->
+
+<h2 id="mouse-events">Mouse events</h2>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.click()</td>
+<td style="text-align: left;">Bind an event handler to the “click” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.dblclick()</td>
+<td style="text-align: left;">Bind an event handler to the “dblclick” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.hover()</td>
+<td style="text-align: left;">Bind one or two handlers to the matched elements, to be executed when the mouse pointer enters and leaves the elements.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.mousedown()</td>
+<td style="text-align: left;">Bind an event handler to the “mousedown” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.mouseenter()</td>
+<td style="text-align: left;">Bind an event handler to be fired when the mouse enters an element, or trigger that handler on an element.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.mouseleave()</td>
+<td style="text-align: left;">Bind an event handler to be fired when the mouse leaves an element, or trigger that handler on an element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.mousemove()</td>
+<td style="text-align: left;">Bind an event handler to the “mousemove” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.mouseout()</td>
+<td style="text-align: left;">Bind an event handler to the “mouseout” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.mouseover()</td>
+<td style="text-align: left;">Bind an event handler to the “mouseover” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.mouseup()</td>
+<td style="text-align: left;">Bind an event handler to the “mouseup” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.toggle()</td>
+<td style="text-align: left;">Bind two or more handlers to the matched elements, to be executed on alternate clicks.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+<a href="https://api.jquery.com/category/events/mouse-events/"><b>jQuery documentation</b> | Category: Mouse Events</a>
+</figcaption>
+
+<!--/figure-->
+
+<h2 id="keyboard-events">Keyboard events</h2>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.keydown()</td>
+<td style="text-align: left;">Bind an event handler to the “keydown” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.keypress()</td>
+<td style="text-align: left;">Bind an event handler to the “keypress” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.keyup()</td>
+<td style="text-align: left;">Bind an event handler to the “keyup” JavaScript event, or trigger that event on an element.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+<a href="https://api.jquery.com/category/events/keyboard-events/"><b>jQuery documentation</b> | Category: Keyboard Events</a>
+</figcaption>
+
+<!--/figure-->
+
+<h2 id="form-events">Form events</h2>
+<!--figure-->
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">jQuery</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.blur()</td>
+<td style="text-align: left;">Bind an event handler to the “blur” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.change()</td>
+<td style="text-align: left;">Bind an event handler to the “change” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.focus()</td>
+<td style="text-align: left;">Bind an event handler to the “focus” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.focusin()</td>
+<td style="text-align: left;">Bind an event handler to the “focusin” event.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.focusout()</td>
+<td style="text-align: left;">Bind an event handler to the “focusout” JavaScript event.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.select()</td>
+<td style="text-align: left;">Bind an event handler to the “select” JavaScript event, or trigger that event on an element.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.submit()</td>
+<td style="text-align: left;">Bind an event handler to the “submit” JavaScript event, or trigger that event on an element.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+<a href="http://api.jquery.com/category/events/form-events/"><b>jQuery documentation</b> | Category: Form Events</a>
+</figcaption>
+
+<!--/figure-->
+
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;vacation&quot;</span><span class="ot"> data-price=</span><span class="st">&#39;399.99&#39;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;h3&gt;</span>Hawaiian Vacation<span class="kw">&lt;/h3&gt;</span>
+  <span class="kw">&lt;p&gt;</span>$399.99 per ticket<span class="kw">&lt;/p&gt;</span>
+  <span class="kw">&lt;p&gt;</span>
+    Tickets:
+    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&#39;number&#39;</span><span class="ot"> class=</span><span class="st">&#39;quantity&#39;</span><span class="ot"> value=</span><span class="st">&#39;1&#39;</span> <span class="kw">/&gt;</span>
+  <span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;p&gt;</span>Total Price: $<span class="kw">&lt;span</span><span class="ot"> id=</span><span class="st">&#39;total&#39;</span><span class="kw">&gt;</span>399.99<span class="kw">&lt;/span&gt;&lt;/p&gt;</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+  <span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;keyup&#39;</span>, <span class="st">&#39;.quantity&#39;</span>, <span class="kw">function</span>() {
+
+    <span class="co">// Get the price for this vacation</span>
+    <span class="co">// Use + to convert the string to a number</span>
+    <span class="kw">var</span> price = +<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">closest</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">data</span>(<span class="st">&#39;price&#39;</span>);
+
+    <span class="co">// Get the quantity entered</span>
+    <span class="co">// Use + to convert the string to a number</span>
+    <span class="kw">var</span> quantity = +<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">val</span>();
+
+    <span class="co">// Set the total to price * quantity</span>
+    <span class="fu">$</span>(<span class="st">&#39;#total&#39;</span>).<span class="fu">text</span>(price * quantity);
+
+  });
+});</code></pre>
+<h2 id="lynk-layover">Lynk Layover</h2>
+<pre class="sourceCode css"><code class="sourceCode css"><span class="fl">.comments</span> <span class="kw">{</span>
+  <span class="kw">display:</span> <span class="dt">none</span><span class="kw">;</span>
+<span class="kw">}</span></code></pre>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;ul&gt;</span>
+  <span class="kw">&lt;li</span><span class="ot"> class=</span><span class="st">&quot;vacation&quot;</span><span class="ot"> data-price=</span><span class="st">&#39;399.99&#39;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&#39;#&#39;</span><span class="ot"> class=</span><span class="st">&#39;expand&#39;</span><span class="kw">&gt;</span>Show Comments<span class="kw">&lt;/a&gt;</span>
+    <span class="kw">&lt;ul</span><span class="ot"> class=</span><span class="st">&quot;comments&quot;</span><span class="kw">&gt;</span>
+      ...
+    <span class="kw">&lt;/ul</span>
+  <span class="er">&lt;/li</span><span class="kw">&gt;</span>
+<span class="kw">&lt;/ul&gt;</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+  <span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.expand&#39;</span>, <span class="kw">function</span>() {
+    <span class="co">// Find the comments ul</span>
+    <span class="kw">var</span> comment = <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">closest</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">find</span>(<span class="st">&#39;.comments&#39;</span>)
+    <span class="co">// Show the comments ul</span>
+    <span class="ot">comment</span>.<span class="fu">fadeToggle</span>();
+  });
+});</code></pre>
+<p>Why does the page jump to the top?</p>
+<ul>
+<li>The click event will “bubble up” to each parent node</li>
+<li>Follows the link! (goes to the top of the page)</li>
+</ul>
+<p>Solution: Add the event parameter</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+  <span class="fu">$</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.expand&#39;</span>, <span class="kw">function</span>(event) {
+
+    <span class="co">// Will not work: The browser will still handle the click event</span>
+    <span class="co">// but will prevent it from “bubbling up” to each parent node.</span>
+    <span class="ot">event</span>.<span class="fu">stopPropagation</span>();
+
+    <span class="co">// Will work!</span>
+    <span class="co">// The click event will “bubble up” but the browser won’t handle it</span>
+    <span class="ot">event</span>.<span class="fu">preventDefault</span>();
+
+    <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">closest</span>(<span class="st">&#39;.vacation&#39;</span>).<span class="fu">find</span>(<span class="st">&#39;.comments&#39;</span>).<span class="fu">fadeToggle</span>();
+
+  });
+});</code></pre>
+</article>
+
+<article title="CSS manipulation" class="static-content">
+
+<h1 id="chapter-5-css-manipulation">Chapter 5: CSS manipulation</h1>
+<h2 id="taming-css">Taming CSS</h2>
+<p>To style something based on user interaction, which would we use?</p>
+<p>Separation of concerns<br />* <em>content</em>: <strong>HTML</strong><br />* <em>style</em>: <strong>CSS</strong><br />* <em>behaviour</em>: <strong>javaScript</strong></p>
+<h3 id="changing-the-style">Changing the style</h3>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;vacations&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;ul&gt;</span>
+    <span class="kw">&lt;li</span><span class="ot"> class=</span><span class="st">&quot;vacation&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;p</span><span class="ot"> class=</span><span class="st">&quot;price&quot;</span><span class="kw">&gt;</span>
+      ...
+      <span class="kw">&lt;/p&gt;</span>
+    <span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;/ul&gt;</span>
+<span class="kw">&lt;/div&gt;</span></code></pre>
+<p>jQuery Object Methods<br />- <code>.css(&lt;attr&gt;, &lt;value&gt;)</code><br />- <code>.css(&lt;attr&gt;)</code><br />- <code>.css(&lt;object&gt;)</code></p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+  <span class="fu">$</span>(<span class="st">&#39;#vacations&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.vacation&#39;</span>, <span class="kw">function</span>() {
+
+    <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">css</span>(<span class="st">&#39;background-color&#39;</span>, <span class="st">&#39;#252b30&#39;</span>);
+    <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">css</span>(<span class="st">&#39;border-color&#39;</span>, <span class="st">&#39;1px solid #967&#39;</span>);
+
+    <span class="co">// Is equivalent to</span>
+
+    <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">css</span>({<span class="st">&#39;background-color&#39;</span>: <span class="st">&#39;#252b30&#39;</span>,
+                 <span class="st">&#39;border-color&#39;</span>: <span class="st">&#39;1px solid #967&#39;</span>});
+
+    <span class="co">// Passing in a JavaScript Object as an argument</span>
+    <span class="co">// is a common jQuery pattern</span>
+  });
+});</code></pre>
+<p>jQuery Object Methods<br />- <code>.show()</code><br />- <code>.hide()</code></p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">find</span>(<span class="st">&#39;.price&#39;</span>).<span class="fu">css</span>(<span class="st">&#39;display&#39;</span>, <span class="st">&#39;block&#39;</span>);
+
+<span class="co">// Same as CSS syntax, but easier to read and understand</span>
+<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">find</span>(<span class="st">&#39;.price&#39;</span>).<span class="fu">show</span>();</code></pre>
+<h3 id="moving-styles-to-external-css">Moving Styles to external CSS</h3>
+<p>jQuery Object Methods<br />- <code>.toggleClass()</code><br />- <code>.addClass(&lt;class&gt;)</code><br />- <code>.removeClass(&lt;class&gt;)</code></p>
+<p>Bad practice: Mixing behaviour and style…</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+  <span class="fu">$</span>(<span class="st">&#39;#vacations&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.vacation&#39;</span>, <span class="kw">function</span>() {
+    <span class="co">/// Can we move these to a CSS stylesheet?</span>
+    <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">css</span>({<span class="st">&#39;background-color&#39;</span>: <span class="st">&#39;#563&#39;</span>,
+                 <span class="st">&#39;border-color&#39;</span>: <span class="st">&#39;1px solid #967&#39;</span>});
+    <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">find</span>(<span class="st">&#39;.price&#39;</span>).<span class="fu">show</span>();
+  });
+});</code></pre>
+<p>Good practice: Separation of concerns: css + javascript<br />It’s now much easier to manipulate with external CSS styles</p>
+<pre class="sourceCode css"><code class="sourceCode css"><span class="fl">.highlighted</span> <span class="kw">{</span>
+  <span class="kw">background-color:</span> <span class="dt">#563</span><span class="kw">;</span>
+  <span class="kw">border-color:</span> <span class="dt">1px</span> <span class="dt">solid</span> <span class="dt">#967</span><span class="kw">;</span>
+<span class="kw">}</span>
+<span class="fl">.highlighted</span> <span class="fl">.price</span> <span class="kw">{</span>
+  <span class="kw">display:</span> <span class="dt">block</span><span class="kw">;</span>
+<span class="kw">}</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+  <span class="fu">$</span>(<span class="st">&#39;#vacations&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.vacation&#39;</span>, <span class="kw">function</span>() {
+    <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">addClass</span>(<span class="st">&#39;highlighted&#39;</span>);
+  });
+});</code></pre>
+<p>We can only show price, but how would we hide price?<br /><code>toggleClass</code><br />Adds the class if $(this) doesn’t have it, removes it if $(this) already has it</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">  <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">toggleClass</span>(<span class="st">&#39;highlighted&#39;</span>);</code></pre>
+<h2 id="animation">Animation</h2>
+<h3 id="adding-movement">Adding Movement</h3>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;vacations&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;ul&gt;</span>
+    <span class="kw">&lt;li</span><span class="ot"> class=</span><span class="st">&quot;vacation&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;p</span><span class="ot"> class=</span><span class="st">&quot;price&quot;</span><span class="kw">&gt;</span>
+      ...
+      <span class="kw">&lt;/p&gt;</span>
+    <span class="kw">&lt;/li&gt;</span>
+  <span class="kw">&lt;/ul&gt;</span>
+<span class="kw">&lt;/div&gt;</span></code></pre>
+<pre class="sourceCode css"><code class="sourceCode css"><span class="fl">.highlighted</span> <span class="kw">{</span>
+  <span class="kw">background-color:</span> <span class="dt">#563</span><span class="kw">;</span>
+  <span class="kw">border-color:</span> <span class="dt">1px</span> <span class="dt">solid</span> <span class="dt">#967</span><span class="kw">;</span>
+<span class="kw">}</span>
+<span class="fl">.highlighted</span> <span class="fl">.price</span> <span class="kw">{</span>
+  <span class="kw">display:</span> <span class="dt">block</span><span class="kw">;</span>
+<span class="kw">}</span></code></pre>
+<p>jQuery Object Methods<br />- <code>.animate(&lt;object&gt;)</code></p>
+<p>Takes in a JavaScript object similar to the .css() method.<br />Will adjust a CSS property pixel by pixel in order to animate it.<br /><i>“If statements”</i> allow your code to make decisions at runtime.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">if</span>(&lt;vacation has the <span class="kw">class</span> highlighted&gt;) {
+    <span class="co">// animate the vacation up  </span>
+    <span class="co">// set &#39;top&#39; property to &#39;-10px&#39;  </span>
+}
+<span class="kw">else</span> {
+    <span class="co">// animate the vacation back down  </span>
+    <span class="co">// &#39;top&#39; to &#39;0px&#39; if a second click occurs  </span>
+}  </code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+    <span class="fu">$</span>(<span class="st">&#39;#vacations&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.vacation&#39;</span>, <span class="kw">function</span>() {
+        <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">toggleClass</span>(<span class="st">&#39;highlighted&#39;</span>);
+
+        <span class="kw">if</span>(<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">hasClass</span>(<span class="st">&#39;highlighted&#39;</span>)) {
+            <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">animate</span>({<span class="st">&#39;top&#39;</span>: <span class="st">&#39;-10px&#39;</span>});
+        } <span class="kw">else</span> {
+            <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">animate</span>({<span class="st">&#39;top&#39;</span>: <span class="st">&#39;0px&#39;</span>});
+        }
+    });
+});</code></pre>
+<h3 id="changing-the-speed">Changing the speed</h3>
+<p>We can optionally pass in the speed as a second argument to animate().<br />Efects methods like animate(), slideToggle() and fadeToggle() can also be given a specific speed as a String or in milliseconds.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">animate</span>({<span class="st">&#39;top&#39;</span>: <span class="st">&#39;-10px&#39;</span>});
+<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">animate</span>({<span class="st">&#39;top&#39;</span>: <span class="st">&#39;-10px&#39;</span>}, <span class="dv">400</span>);
+
+<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">animate</span>({<span class="st">&#39;top&#39;</span>: <span class="st">&#39;-10px&#39;</span>}, <span class="st">&#39;fast&#39;</span>);
+<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">animate</span>({<span class="st">&#39;top&#39;</span>: <span class="st">&#39;-10px&#39;</span>}, <span class="dv">200</span>);
+
+<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">animate</span>({<span class="st">&#39;top&#39;</span>: <span class="st">&#39;-10px&#39;</span>}, <span class="st">&#39;slow&#39;</span>);
+<span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">animate</span>({<span class="st">&#39;top&#39;</span>: <span class="st">&#39;-10px&#39;</span>}, <span class="dv">600</span>);</code></pre>
+<h3 id="moving-animations-to-external-css">Moving Animations to external CSS</h3>
+<p>Isn’t this still styling? Shouldn’t it be inside of a stylesheet?</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+    <span class="fu">$</span>(<span class="st">&#39;#vacations&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.vacation&#39;</span>, <span class="kw">function</span>() {
+        <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">toggleClass</span>(<span class="st">&#39;highlighted&#39;</span>);
+    });
+});</code></pre>
+<pre class="sourceCode css"><code class="sourceCode css"><span class="fl">.vacation</span> <span class="kw">{</span>
+    <span class="er">//</span> <span class="er">Will</span> <span class="er">only</span> <span class="er">work</span> <span class="er">with</span> <span class="er">browsers</span> <span class="er">that</span> <span class="er">implement</span> <span class="er">CSS</span> <span class="er">transitions</span>
+    <span class="kw">transition:</span> <span class="dt">top</span> <span class="dt">0.2s</span><span class="kw">;</span>
+
+    <span class="er">//</span> <span class="er">Unlike</span> <span class="er">jQuery,</span> <span class="er">with</span> <span class="er">CSS</span> <span class="er">we</span> <span class="er">have</span> <span class="er">to</span> <span class="er">account</span> <span class="er">for</span> <span class="er">specific</span> <span class="er">browsers</span>
+    <span class="kw">-moz-transition:</span> <span class="dt">top</span> <span class="dt">0.2s</span><span class="kw">;</span>
+    <span class="kw">-o-transition:</span> <span class="dt">top</span> <span class="dt">0.2s</span><span class="kw">;</span>
+    <span class="kw">-webkit-transition:</span> <span class="dt">top</span> <span class="dt">0.2s</span><span class="kw">;</span>
+<span class="kw">}</span>
+<span class="fl">.highlighted</span> <span class="kw">{</span>
+    <span class="kw">top:</span> <span class="dt">-10px</span><span class="kw">;</span>
+<span class="kw">}</span></code></pre>
+</article>
+
+<article title="References" class="static-content">
+
+<h1 id="references">References</h1>
+</article>
+
+<script type="text/javascript" src="../../../../../../ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+
+</body>
+</html>

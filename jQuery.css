@@ -1,0 +1,170 @@
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(http://fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff) format('woff');
+}
+
+html,head,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td {
+	margin:0;
+	padding:0;
+	border:0;
+	text-decoration: none;
+}
+
+a, a:hover, a:visited, a:link, a:active {
+	text-decoration: none;
+	color: #1C6E7E;
+}
+
+body {
+	font-family: "Open Sans","Source Sans Pro","Calibri","Helvetica",sans-serif;
+	/*font-family: "Open Sans";*/
+	font-weight: 300;
+	/*font-size: calc(0.6vw + 0.8em);*/
+	font-size: 16px;
+	line-height: 1.6;
+	padding: 25px;
+  background-color: white;
+	max-width:80%;
+	margin-left: auto;
+	margin-right: auto
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Open Sans","Source Sans Pro","Calibri","Helvetica",sans-serif;
+    letter-spacing: 2px;
+		font-weight: 300;
+		line-height: 1em;
+}
+
+h1 {
+	color: #21759B;
+	margin: 50px 0 15px 0;
+	border-top: 1px solid #AAAAAA;
+	padding-top: 10px;
+	font-weight: bold;
+}
+
+
+h2 {
+	color: #339999;
+	margin: 20px 0 15px;
+	font-weight: bolder;
+	padding-top: 10px;
+}
+
+h3 {
+	color: #333333;
+	margin: 20px 0 5px 0;
+	border-bottom: 1px solid #aaaaaa;
+	display: inline-block;
+	padding-top:0px;
+}
+
+h4 {
+	color: #666666;
+	margin: 10px;
+}
+
+ol {
+	padding-left: 20px;
+}
+
+ul {
+	padding: 0 0 0 30px;
+}
+
+li {
+	margin-bottom: 5px;
+}
+
+p {
+	color: #444444;
+	margin: 10px 0 5px 0;
+}
+
+pre {
+
+    /*
+    margin: 10px 0 10px 20px;
+	padding: 5px;
+	font-size: calc(0.6vw + 0.4em);
+	font-size: 14px;
+    */
+
+    white-space: pre-wrap;
+    margin: 15px 0;
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    padding: 6px 10px;
+    border-radius: 3px;
+}
+
+
+header {
+	margin: 0;
+	margin-botton: -20px;
+}
+header .title{
+	color: #FFFFFF;
+	background: #21759B;
+	margin: 0 0 0 0;
+	border-top: none;
+	padding: 15px 15px 15px 15px;
+}
+header .subtitle{
+	margin: 0 0 0 0;
+	line-height: 0.5;
+	visibility: collapse;
+}
+header .author{
+	margin: 0 0 0 0;
+	line-height: 0.5;
+	visibility: collapse;
+}
+header .date{
+	margin: 0 0 0 0;
+	line-height: 0.5;
+	visibility: collapse;
+}
+
+nav {
+	margin: 50px, 0, 30px, 15px;
+	padding: 15px;
+	color: #21759B;
+	background-color: #EEEEEE;
+}
+
+nav a {
+	color: #21759B;
+}
+
+table {
+	margin-top: 30px;
+	margin-left: 0px;
+	margin-bottom: 0px;
+	border-spacing: 0;
+	border-bottom: 2px solid black;
+	border-top: 2px solid black;
+	padding-top: 0px;
+	padding-bottom: 10px;
+}
+table th {
+	padding: 3px 10px;
+	background-color: white;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 1px solid black;
+}
+table td {
+	padding: 3px 10px;
+	border-top: none;
+	border-left: none;
+	border-bottom: none;
+	border-right: none;
+}

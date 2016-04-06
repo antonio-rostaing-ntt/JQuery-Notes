@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="prueba" content="prueba">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Antonio Rostaing">
+  <title>jQuery. Ajax</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="./normalize.css">
+  <link rel="stylesheet" href="./jQuery.css">
+</head>
+<body>
+<header>
+<h1 class="title">jQuery. Ajax</h1>
+<h2 class="author">Antonio Rostaing</h2>
+<h3 class="date">January, 2014</h3>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#chapter-1-ajax-basic">Chapter 1: AJAX Basic</a><ul>
+<li><a href="#ajax-call-example">Ajax call example</a></li>
+<li><a href="#shorthand-with-.get">Shorthand with $.get</a></li>
+<li><a href="#sending-parameters-with-requests">Sending parameters with requests</a></li>
+</ul></li>
+<li><a href="#chapter-2-ajax-options">Chapter 2: Ajax options</a><ul>
+<li><a href="#handling-failed-ajax-request">Handling failed AJAX request</a></li>
+<li><a href="#using-event-delegation">Using event delegation</a></li>
+</ul></li>
+<li><a href="#chapter-3-refactoring-to-objects">Chapter 3: Refactoring to Objects</a></li>
+<li><a href="#chapter-4-refactoring-to-functions">Chapter 4: Refactoring to Functions</a><ul>
+<li><a href="#object-vs-functions">Object vs Functions</a></li>
+<li><a href="#refactoring-code">Refactoring code</a></li>
+<li><a href="#setting-the-proper-this">Setting the proper <code>this</code></a></li>
+<li><a href="#refactoring-hardcoded-dom-elements">Refactoring hardcoded DOM elements</a></li>
+</ul></li>
+<li><a href="#chapter-5-ajax-forms">Chapter 5: Ajax Forms</a></li>
+<li><a href="#chapter-6-ajax-with-json">Chapter 6: Ajax with JSON</a><ul>
+<li><a href="#reading-the-json-result-and-creating-html">Reading the JSON result and creating HTML</a></li>
+</ul></li>
+<li><a href="#chapter-7-utility-methods">Chapter 7: Utility Methods</a><ul>
+<li><a href="#multiple-results-from-json">Multiple results from JSON</a></li>
+<li><a href="#transforming-an-array-of-objects-into-html">Transforming an array of objects into HTML</a></li>
+<li><a href="#each-vs-.map">$.each vs $.map</a></li>
+<li><a href="#give-the-dom-a-break-with-.detach">Give the DOM a break with .detach()</a></li>
+</ul></li>
+<li><a href="#chapter-8-advanced-events">Chapter 8: Advanced Events</a></li>
+</ul>
+</nav>
+<article title="AJAX Basic">
+
+<h1 id="chapter-1-ajax-basic">Chapter 1: AJAX Basic</h1>
+<h2 id="ajax-call-example">Ajax call example</h2>
+<p>AJAX: Asynchronous Javascript And XML.<br />A client side technique for communicating with a web server.</p>
+<p><strong>jQuery Methods</strong><br /><code>$.ajax(url[, settings])</code></p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">function</span>(){
+
+  <span class="co">// AJAX call</span>
+  <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;http://example.org/confirmation.html&#39;</span>, {
+
+     <span class="co">// sucess: run only when the server return a successful response</span>
+     <span class="dt">success</span>: <span class="kw">function</span>(response) {
+       <span class="fu">$</span>(<span class="st">&#39;.ticket&#39;</span>).<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+     }
+
+  });
+
+});</code></pre>
+<p><code>response</code>: The response which get returned. Not a full page.</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="co">&lt;!-- http://example.org/confirmation.html--&gt;</span>
+￼<span class="kw">&lt;div&gt;</span>
+  <span class="kw">&lt;strong&gt;</span>Boarding Pass: <span class="kw">&lt;/strong&gt;</span>
+  <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&#39;#&#39;</span><span class="ot"> class=</span><span class="st">&#39;view-boarding-pass&#39;</span><span class="kw">&gt;</span>View Boarding Pass<span class="kw">&lt;/a&gt;</span>
+  <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&#39;ticket.png&#39;</span><span class="ot"> alt=</span><span class="st">&#39;Your boarding pass&#39;</span><span class="ot"> class=</span><span class="st">&#39;boarding-pass&#39;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;/div&gt;</span></code></pre>
+<h2 id="shorthand-with-.get">Shorthand with $.get</h2>
+<p><strong>jQuery Methods</strong><br /><code>$.get(url, success)</code></p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Equivalent to previous call</span>
+￼￼￼<span class="ot">$</span>.<span class="fu">get</span>(<span class="st">&#39;http://example.org/confirmation.html&#39;</span>, <span class="kw">function</span>(response) {
+    <span class="fu">$</span>(<span class="st">&#39;.ticket&#39;</span>).<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+});</code></pre>
+<h2 id="sending-parameters-with-requests">Sending parameters with requests</h2>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// How would we do a request with a Confirmation Number?</span>
+<span class="co">// ￼confirmation.html?confNum=1234</span>
+
+<span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html?confNum=1234&#39;</span>, { <span class="dt">success</span>: <span class="kw">function</span>(response) {
+     <span class="fu">$</span>(<span class="st">&#39;.ticket&#39;</span>).<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+   }
+});
+
+<span class="co">// Equivalent to $.ajax call above</span>
+<span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html&#39;</span>, {
+   <span class="dt">success</span>: <span class="kw">function</span>(response) {
+     <span class="fu">$</span>(<span class="st">&#39;.ticket&#39;</span>).<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+   },
+   <span class="dt">data</span>: { <span class="st">&quot;confNum&quot;</span>: <span class="dv">1234</span> }   <span class="co">// JavaScript object!</span>
+});</code></pre>
+<p>Often the data in the request is dynamic. The <code>confNum</code> could be pulled from the HTML.</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&#39;ticket&#39;</span><span class="ot"> data-confNum=</span><span class="st">&#39;1234&#39;</span><span class="kw">&gt;</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html&#39;</span>, {
+     <span class="dt">success</span>: <span class="kw">function</span>(response) {
+       <span class="fu">$</span>(<span class="st">&#39;.ticket&#39;</span>).<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+     },
+     <span class="dt">data</span>: { <span class="st">&quot;confNum&quot;</span>: <span class="fu">$</span>(<span class="st">&quot;.ticket&quot;</span>).<span class="fu">data</span>(<span class="st">&quot;confNum&quot;</span>)
+     }
+});</code></pre>
+</article>
+
+<article title="Ajax options">
+
+<h1 id="chapter-2-ajax-options">Chapter 2: Ajax options</h1>
+<h2 id="handling-failed-ajax-request">Handling failed AJAX request</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Member</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">success</td>
+<td style="text-align: left;">Run only when the server return a successful response</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">error</td>
+<td style="text-align: left;">Runs this callback if there is a timeout, abort or server error</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">timeout</td>
+<td style="text-align: left;">Setting the timeout speed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beforeSend</td>
+<td style="text-align: left;">Runs before the Ajax request</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">complete</td>
+<td style="text-align: left;">Runs after both success and error</td>
+</tr>
+</tbody>
+</table>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">function</span>(){
+  <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html&#39;</span>, {
+    <span class="dt">success</span>: <span class="kw">function</span>(response) {
+      <span class="co">// Run only when the server return a successful response</span>
+      <span class="fu">$</span>(<span class="st">&#39;.ticket&#39;</span>).<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+    },
+    <span class="dt">error</span>: <span class="kw">function</span>(request, errorType, errorMessage) {
+      <span class="co">// Runs this callback if there is a timeout, abort or server error</span>
+      <span class="fu">alert</span>(<span class="st">&#39;Error: &#39;</span> + errorType + <span class="st">&#39; with message: &#39;</span> + errorMessage);
+    },
+    <span class="dt">timeout</span>: <span class="dv">3000</span>, <span class="co">// In ms</span>
+    <span class="dt">beforeSend</span>: <span class="kw">function</span>() {
+      <span class="co">// Runs before the Ajax request</span>
+      <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">addClass</span>(<span class="st">&#39;is-loading&#39;</span>); <span class="co">// Add a loading animation</span>
+    },
+    <span class="dt">complete</span>: <span class="kw">function</span>() {
+      <span class="co">// Runs after both success and error</span>
+      <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">removeClass</span>(<span class="st">&#39;is-loading&#39;</span>); <span class="co">// Remove loading animation</span>
+    }
+  });
+});</code></pre>
+<h2 id="using-event-delegation">Using event delegation</h2>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="co">&lt;!-- http://example.org/confirmation.html --&gt;</span>
+<span class="kw">&lt;div&gt;</span> ...
+   <span class="kw">&lt;strong&gt;</span>Boarding Pass: <span class="kw">&lt;/strong&gt;</span>
+   <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&#39;#&#39;</span><span class="ot"> class=</span><span class="st">&#39;view-boarding-pass&#39;</span><span class="kw">&gt;</span>View Boarding Pass<span class="kw">&lt;/a&gt;</span>
+   <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&#39;ticket.png&#39;</span><span class="ot"> alt=</span><span class="st">&#39;Your boarding pass&#39;</span><span class="ot"> class=</span><span class="st">&#39;boarding-pass&#39;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;/div&gt;</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Do NOT work!</span>
+<span class="fu">$</span>(<span class="st">&#39;.confirmation .view-boarding-pass&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="kw">function</span>(){ ... });</code></pre>
+<p>This was run once when the page loaded.<br />But when the page loaded <code>.view-boarding-pass</code> didn’t exist.<br />It only existed after our AJAX request.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Work!</span>
+<span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.view-boarding-pass&#39;</span>, <span class="kw">function</span>(){ ... });</code></pre>
+<p>Listen for click events inside <code>.confirmation</code><br />When they happen, check if the target was <code>.view-boarding-pass</code></p>
+</article>
+
+<article title="Refactoring to Objects">
+
+<h1 id="chapter-3-refactoring-to-objects">Chapter 3: Refactoring to Objects</h1>
+<p>How can we organize this?<br />That’s a big document ready method!</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+
+  ￼￼<span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">function</span>() {
+    <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html&#39;</span>, {
+      <span class="dt">timeout</span>: <span class="dv">3000</span>,
+      <span class="dt">success</span>: <span class="kw">function</span>(response) {
+        <span class="fu">$</span>(<span class="st">&#39;.ticket&#39;</span>).<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+      },
+      <span class="dt">error</span>: <span class="kw">function</span>(request, errorType, errorMessage) {
+        <span class="fu">alert</span>(<span class="st">&#39;Error: &#39;</span> + errorType + <span class="st">&#39; with message: &#39;</span> + errorMessage);
+      },
+      <span class="dt">beforeSend</span>: <span class="kw">function</span>() {
+        <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">addClass</span>(<span class="st">&#39;is-loading&#39;</span>);
+      },
+      <span class="dt">complete</span>: <span class="kw">function</span>() {
+        <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">removeClass</span>(<span class="st">&#39;is-loading&#39;</span>);
+        }
+    });
+  });
+
+  <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.view-boarding-pass&#39;</span>, <span class="kw">function</span>(event) {
+    <span class="ot">event</span>.<span class="fu">preventDefault</span>();
+    <span class="fu">$</span>(<span class="st">&#39;view-boarding-pass&#39;</span>).<span class="fu">hide</span>();
+    <span class="fu">$</span>(<span class="st">&#39;boarding-pass&#39;</span>).<span class="fu">show</span>();
+  });
+
+});</code></pre>
+<p>Within init, we can run all the code that was in our document ready function.<br />Much easier to read what happens on load.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> confirmation = {
+  <span class="dt">init</span>: <span class="kw">function</span>() {
+
+    ￼￼￼￼<span class="co">// Our existing event handlers</span>
+
+    <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">function</span>() {
+      <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html&#39;</span>, {
+        <span class="co">//...</span>
+      });
+    });
+
+    <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.view-boarding-pass&#39;</span>, <span class="kw">function</span>(event) {
+      <span class="co">//...</span>
+    });
+
+  }
+￼};
+
+<span class="co">//Kick things off on page load</span>
+(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+  <span class="ot">confirmation</span>.<span class="fu">init</span>();
+￼});</code></pre>
+<p>We can also put functions out of <code>init</code> to make easier to read.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> confirmation = {
+  <span class="dt">init</span>: <span class="kw">function</span>() {
+    <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">this</span>.<span class="fu">loadConfirmation</span>);
+    <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.view-boarding-pass&#39;</span>, <span class="kw">this</span>.<span class="fu">showBoardingPass</span>);
+  },
+  <span class="dt">loadConfirmation</span>: <span class="kw">function</span>() {
+    <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html&#39;</span>, { ... });
+  },
+  <span class="dt">showBoardingPass</span>: <span class="kw">function</span>(event) { ... }
+};
+
+<span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+  <span class="ot">confirmation</span>.<span class="fu">init</span>();
+});</code></pre>
+</article>
+
+<article title="Refactoring to Fuctions">
+
+<h1 id="chapter-4-refactoring-to-functions">Chapter 4: Refactoring to Functions</h1>
+<h2 id="object-vs-functions">Object vs Functions</h2>
+<ul>
+<li><strong>Object</strong>: Limited to 1 confirmation on the page</li>
+<li><strong>Function</strong>: Can have multiple vacations</li>
+</ul>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">//  Object</span>
+<span class="kw">var</span> vacation = {
+  <span class="dt">init</span>: <span class="kw">function</span>() {
+    <span class="co">// init vacation</span>
+  }
+};
+
+<span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+    <span class="ot">vacation</span>.<span class="fu">init</span>();
+});
+
+<span class="co">// Function</span>
+<span class="kw">function</span> <span class="fu">Vacation</span>(destination) {
+    <span class="co">// init vacation to destination</span>
+}
+
+<span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+    <span class="kw">var</span> paris = <span class="kw">new</span> <span class="fu">Vacation</span>(<span class="st">&#39;Paris&#39;</span>);
+    <span class="kw">var</span> london = <span class="kw">new</span> <span class="fu">Vacation</span>(<span class="st">&#39;London&#39;</span>);
+});</code></pre>
+<h2 id="refactoring-code">Refactoring code</h2>
+<p>Lets move this object into a reusable function.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> confirmation = {
+    <span class="dt">init</span>: <span class="kw">function</span>() {
+        <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">this</span>.<span class="fu">loadConfirmation</span>);
+        <span class="fu">$</span>(<span class="st">&#39;.confirmation&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.view-boarding-pass&#39;</span>, <span class="kw">this</span>.<span class="fu">showBoardingPass</span>);
+    },
+    <span class="dt">loadConfirmation</span>: <span class="kw">function</span>() { ... }
+    <span class="dt">showBoardingPass</span>: <span class="kw">function</span>(event) { ... }
+};
+
+<span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+    <span class="ot">confirmation</span>.<span class="fu">init</span>();
+});</code></pre>
+<p>Refactoring…</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// &#39;el&#39; refers to the element</span>
+<span class="kw">function</span> <span class="fu">Confirmation</span> (el) {
+
+    <span class="co">//Save a reference to the passed in element</span>
+    <span class="kw">this</span>.<span class="fu">el</span> = el;
+
+    <span class="co">// Fixing the target element</span>
+    <span class="kw">this</span>.<span class="fu">ticket</span> = <span class="kw">this</span>.<span class="ot">el</span>.<span class="fu">find</span>(<span class="st">&#39;.ticket&#39;</span>);
+
+    <span class="co">// helper methods go here</span>
+    <span class="kw">this</span>.<span class="fu">loadConfirmation</span> = <span class="kw">function</span>() {
+        <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html&#39;</span>, {
+        <span class="dt">timeout</span>: <span class="dv">3000</span>,
+        <span class="dt">success</span>: <span class="kw">function</span>(response) {
+
+            <span class="co">// Be careful! Sometimes jQuery changes the value of ‘this’</span>
+            <span class="co">// Inside AJAX callbacks, this is set to the AJAX settings.</span>
+            <span class="co">// This refers to ajax settings and not our function’s el</span>
+            <span class="co">// So...  The next line of code will not work</span>
+            <span class="kw">this</span>.<span class="ot">ticket</span>.<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+        }
+     });
+}
+
+<span class="kw">this</span>.<span class="fu">showBoardingPass</span> = <span class="kw">function</span>(event) { ... }
+
+<span class="co">// event handlers go here</span>
+<span class="kw">this</span>.<span class="ot">el</span>.<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;button&#39;</span>, <span class="kw">this</span>.<span class="fu">loadConfirmation</span>);
+<span class="kw">this</span>.<span class="ot">el</span>.<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="st">&#39;.view-boarding-pass&#39;</span>, <span class="kw">this</span>.<span class="fu">showBoardingPass</span>);
+}
+
+<span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>() {
+    <span class="co">// Create a new confirmtion for each ticket</span>
+    <span class="kw">var</span> paris = <span class="kw">new</span> <span class="fu">Confirmation</span>(<span class="fu">$</span>(<span class="st">&#39;#paris&#39;</span>));
+    <span class="kw">var</span> london = <span class="kw">new</span> <span class="fu">Confirmation</span>(<span class="fu">$</span>(<span class="st">&#39;#london&#39;</span>));
+});</code></pre>
+<h2 id="setting-the-proper-this">Setting the proper <code>this</code></h2>
+<p><code>context</code> Allows us to set the value of “this” inside our callbacks.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">//...</span>
+<span class="kw">this</span>.<span class="fu">el</span> = el;
+<span class="kw">this</span>.<span class="fu">ticket</span> = <span class="kw">this</span>.<span class="ot">el</span>.<span class="fu">find</span>(<span class="st">&#39;.ticket&#39;</span>);
+
+<span class="co">// Allows us to set the value of “this” inside our callbacks.</span>
+<span class="kw">var</span> confirmation = <span class="kw">this</span>;
+
+<span class="kw">this</span>.<span class="fu">loadConfirmation</span> = <span class="kw">function</span>() {
+
+    <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;confirmation.html&#39;</span>, {
+      <span class="dt">timeout</span>: <span class="dv">3000</span>,
+      <span class="dt">context</span>: confirmation,
+      <span class="dt">success</span>: <span class="kw">function</span>(response) {
+        <span class="kw">this</span>.<span class="ot">ticket</span>.<span class="fu">html</span>(response).<span class="fu">slideDown</span>();
+      }
+    });
+}</code></pre>
+<h2 id="refactoring-hardcoded-dom-elements">Refactoring hardcoded DOM elements</h2>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Run when the link is clicked</span>
+<span class="kw">this</span>.<span class="fu">showBoardingPass</span> = <span class="kw">function</span>(event) {
+
+  <span class="ot">event</span>.<span class="fu">preventDefault</span>();
+
+  <span class="co">// In the context of an event callback ‘this’ is set to the dom object</span>
+  <span class="ot">console</span>.<span class="fu">log</span>(<span class="kw">this</span>);
+
+  <span class="co">// References the confirmation object in the parent scope</span>
+  <span class="ot">console</span>.<span class="fu">log</span>(confirmation);
+}</code></pre>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;#&quot;</span><span class="ot"> class=</span><span class="st">&quot;view-boarding-pass&quot;</span><span class="ot"> style=</span><span class="st">&quot;display: none;&quot;</span><span class="kw">&gt;</span>View Boarding Pass<span class="kw">&lt;/a&gt;</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">Confirmation {
+  <span class="dt">loadConfirmation</span>:
+  <span class="kw">function</span>, <span class="dt">showBoardingPass</span>:
+  <span class="kw">function</span>, <span class="dt">el</span>:<span class="ot">b</span>.<span class="ot">fn</span>.<span class="ot">b</span>.<span class="fu">init</span>[<span class="dv">1</span>],
+  <span class="dt">ticket</span>: <span class="ot">b</span>.<span class="ot">fn</span>.<span class="ot">b</span>.<span class="fu">init</span>[<span class="dv">1</span>]
+}</code></pre>
+<p>Refactoring to functions.<br />Remember, <code>this</code> will be the link that was clicked.<br />Able to use variables from the parent scope.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">this</span>.<span class="fu">showBoardingPass</span> = <span class="kw">function</span>(event) {
+  <span class="ot">event</span>.<span class="fu">preventDefault</span>();
+  <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">hide</span>();
+  <span class="ot">confirmation</span>.<span class="ot">el</span>.<span class="fu">find</span>(<span class="st">&#39;.boarding-pass&#39;</span>).<span class="fu">show</span>();
+}</code></pre>
+￼
+</article>
+
+<article title="Ajax Forms">
+
+<h1 id="chapter-5-ajax-forms">Chapter 5: Ajax Forms</h1>
+<p>Submiting a form via AJAX:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;form</span><span class="ot"> action=</span><span class="st">&#39;/book&#39;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;select</span><span class="ot"> id=</span><span class="st">&#39;destination&#39;</span><span class="ot"> name=</span><span class="st">&#39;destination&#39;</span><span class="kw">&gt;</span>
+  ...
+  <span class="kw">&lt;/select&gt;</span>
+  <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&#39;text&#39;</span><span class="ot"> id=</span><span class="st">&#39;quantity&#39;</span><span class="ot"> name=</span><span class="st">&#39;quantity&#39;</span><span class="ot"> value=</span><span class="st">&#39;1&#39;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;/form&gt;</span></code></pre>
+<p>Will do a POST request to the server, which is used for forms.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;form&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;submit&#39;</span>, <span class="kw">function</span>(e) {
+
+  <span class="co">// Prevents browser from submitting</span>
+  <span class="ot">event</span>.<span class="fu">preventDefault</span>();
+
+  <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;/book&#39;</span>, {
+    <span class="dt">type</span>: <span class="st">&#39;POST&#39;</span>
+  });
+)</code></pre>
+<p>This would do the AJAX request, but it’s not sending any form data over.<br />How would we pass the values of this form via <code>$.ajax</code>?</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;form&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;submit&#39;</span>, <span class="kw">function</span>(event) {
+  <span class="ot">event</span>.<span class="fu">preventDefault</span>();
+  <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;/book&#39;</span>, {
+    <span class="dt">type</span>: <span class="st">&#39;POST&#39;</span>
+    <span class="dt">data</span>: { <span class="st">&quot;destination&quot;</span>: <span class="fu">$</span>(<span class="st">&#39;#destination&#39;</span>).<span class="fu">val</span>(),
+            <span class="st">&quot;quantity&quot;</span>: <span class="fu">$</span>(<span class="st">&#39;#quantity&#39;</span>).<span class="fu">val</span>() }
+  });
+});</code></pre>
+<p>Works, but there’s a better way…</p>
+<p><strong>jQuery Object Methods</strong><br /><code>serialize()</code> Used to merge all form fields for submission</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;form&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;submit&#39;</span>, <span class="kw">function</span>(event) {
+  <span class="ot">event</span>.<span class="fu">preventDefault</span>();
+  <span class="kw">var</span> form = <span class="fu">$</span>(<span class="kw">this</span>);
+  <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;/book&#39;</span>, {
+    <span class="dt">type</span>: <span class="st">&#39;POST&#39;</span>,
+    <span class="dt">data</span>: <span class="ot">form</span>.<span class="fu">serialize</span>(),
+    <span class="dt">success</span>: <span class="kw">function</span>(result) {
+      <span class="co">// Like our previous $.ajax request, success is called with the HTML result</span>
+      <span class="ot">form</span>.<span class="fu">remove</span>();
+      <span class="fu">$</span>(<span class="st">&#39;#vacation&#39;</span>).<span class="fu">hide</span>().<span class="fu">html</span>(result).<span class="fu">fadeIn</span>();
+    }
+  });
+});</code></pre>
+</article>
+
+<article title="Ajax with JSON">
+
+<h1 id="chapter-6-ajax-with-json">Chapter 6: Ajax with JSON</h1>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;form&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;submit&#39;</span>, <span class="kw">function</span>(event) {
+  <span class="ot">event</span>.<span class="fu">preventDefault</span>();
+  <span class="kw">var</span> form = <span class="fu">$</span>(<span class="kw">this</span>);
+  <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;/book&#39;</span>, {
+    <span class="dt">type</span>: <span class="st">&#39;POST&#39;</span>,
+    <span class="dt">data</span>: <span class="ot">form</span>.<span class="fu">serialize</span>(),
+
+    <span class="co">// Parse the response as JSON</span>
+    <span class="dt">dataType</span>: <span class="st">&#39;json&#39;</span>,
+
+    <span class="co">// Ask the server to respond with JSON</span>
+    <span class="dt">contentType</span>: <span class="st">&#39;application/json&#39;</span>,
+
+    <span class="dt">success</span>: <span class="kw">function</span>(result) {
+      <span class="co">// Result isn’t HTML, we’ll need to create a DOM node here</span>
+      <span class="ot">form</span>.<span class="fu">remove</span>();
+      <span class="fu">$</span>(<span class="st">&#39;#vacation&#39;</span>).<span class="fu">hide</span>().<span class="fu">html</span>(result).<span class="fu">fadeIn</span>();
+    }
+  });
+});</code></pre>
+<h2 id="reading-the-json-result-and-creating-html">Reading the JSON result and creating HTML</h2>
+<p><code>result</code>: JSON is converted into a JavaScript Object.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">{
+ <span class="dt">location</span>: <span class="st">&#39;Paris&#39;</span>,
+ <span class="dt">totalPrice</span>: <span class="fl">1196.00</span>,
+ <span class="dt">nights</span>: <span class="dv">4</span>,
+ <span class="dt">confirmation</span>: <span class="st">&#39;345feab&#39;</span>
+ }</code></pre>
+<p>Create and add a new DOM node.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">success: <span class="kw">function</span>(result) {
+  <span class="ot">form</span>.<span class="fu">remove</span>();
+  <span class="kw">var</span> msg = <span class="fu">$</span>(<span class="st">&quot;&lt;p&gt;&lt;/p&gt;&quot;</span>);
+ <span class="ot">msg</span>.<span class="fu">append</span>(<span class="st">&quot;Destination: &quot;</span> + <span class="ot">result</span>.<span class="fu">location</span> + <span class="st">&quot;. &quot;</span>);
+ <span class="ot">msg</span>.<span class="fu">append</span>(<span class="st">&quot;Price: &quot;</span> + <span class="ot">result</span>.<span class="fu">totalPrice</span> + <span class="st">&quot;. &quot;</span>);
+ <span class="ot">msg</span>.<span class="fu">append</span>(<span class="st">&quot;Nights: &quot;</span> + <span class="ot">result</span>.<span class="fu">nights</span> + <span class="st">&quot;. &quot;</span>);
+ <span class="ot">msg</span>.<span class="fu">append</span>(<span class="st">&quot;Confirmation: &quot;</span> + <span class="ot">result</span>.<span class="fu">confirmation</span>+ <span class="st">&quot;.&quot;</span>);
+
+ <span class="fu">$</span>(<span class="st">&#39;#vacation&#39;</span>).<span class="fu">hide</span>().<span class="fu">html</span>(msg).<span class="fu">fadeIn</span>();
+}</code></pre>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;p&gt;</span>Destination: Paris. Price: $2196.00. Nights: 4. Confirmation: 345feab.<span class="kw">&lt;/p&gt;</span></code></pre>
+<p><em>Don´t repeat yourself!</em><br />Form URL is in both HTML and JavaScript</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;form</span><span class="ot"> action=</span><span class="st">&#39;/book&#39;</span><span class="ot"> method=</span><span class="st">&#39;POST&#39;</span><span class="kw">&gt;</span>
+  ...
+<span class="kw">&lt;/form&gt;</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;/book&#39;</span>, { ... });</code></pre>
+<p><strong>jQuery Object Methods</strong></p>
+<ul>
+<li><code>attr(&lt;attribute&gt;)</code><br /></li>
+<li><code>attr(&lt;attribute&gt;, &lt;value&gt;)</code></li>
+</ul>
+<p>Will use the action from the form HTML</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">$</span>.<span class="fu">ajax</span>(<span class="fu">$</span>(<span class="st">&#39;form&#39;</span>).<span class="fu">attr</span>(<span class="st">&#39;action&#39;</span>),{ ... });</code></pre>
+</article>
+
+<article title="Chapter 7: Utility Methods">
+
+<h1 id="chapter-7-utility-methods">Chapter 7: Utility Methods</h1>
+<h2 id="multiple-results-from-json">Multiple results from JSON</h2>
+<p>Result is now an array of objects</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">[
+  {
+    <span class="dt">image</span>: <span class="st">&quot;images/paris.png&quot;</span>,
+    <span class="dt">name</span>: <span class="st">&quot;Paris, France&quot;</span>,
+  },
+  {
+    <span class="dt">image</span>: <span class="st">&quot;images/london.png&quot;</span>,
+    <span class="dt">name</span>: <span class="st">&quot;London, UK&quot;</span>
+  },
+  {
+    <span class="dt">image</span>: <span class="st">&quot;images/madrid.png&quot;</span>,
+    <span class="dt">name</span>: <span class="st">&quot;Madrid, Spain&quot;</span>
+  }
+]</code></pre>
+<p>Need to ‘loop’ over each favorite</p>
+<p><strong>Utility Method</strong><br /><code>$.each(collection, function(&lt;index&gt;, &lt;object&gt;) {})</code></p>
+<p>Calls the function for each object in the collection</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">success: <span class="kw">function</span>(result) {
+   <span class="ot">$</span>.<span class="fu">each</span>(result, <span class="kw">function</span>(index, city) {
+     <span class="kw">var</span> favorite = <span class="fu">$</span>(<span class="st">&#39;.favorite-&#39;</span> + index);
+     <span class="ot">favorite</span>.<span class="fu">find</span>(<span class="st">&#39;p&#39;</span>).<span class="fu">html</span>(<span class="ot">city</span>.<span class="fu">name</span>);
+     <span class="ot">favorite</span>.<span class="fu">find</span>(<span class="st">&#39;img&#39;</span>)
+             .<span class="fu">attr</span>(<span class="st">&#39;src&#39;</span>, <span class="ot">city</span>.<span class="fu">image</span>);
+   }
+}</code></pre>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&#39;favorite-0&#39;</span><span class="kw">&gt;</span>
+ ...
+<span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&#39;favorite-1&#39;</span><span class="kw">&gt;</span>
+ ...
+<span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&#39;favorite-2&#39;</span><span class="kw">&gt;</span>
+ ...
+<span class="kw">&lt;/div&gt;</span></code></pre>
+<h2 id="transforming-an-array-of-objects-into-html">Transforming an array of objects into HTML</h2>
+<p><strong>Utility Method</strong><br /><code>$.getJSON(url, success);</code></p>
+<p>Equivalent calls…</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.update-status&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="kw">function</span>() {
+  <span class="ot">$</span>.<span class="fu">ajax</span>(<span class="st">&#39;/status&#39;</span>, {
+    <span class="dt">contentType</span>: <span class="st">&#39;application/json&#39;</span>,
+    <span class="dt">dataType</span>: <span class="st">&#39;json&#39;</span>,
+    <span class="dt">success</span>: <span class="kw">function</span>(result) {
+      <span class="co">// result will be an array of JavaScript Objects</span>
+      ...
+    }
+  });
+});</code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">   <span class="ot">$</span>.<span class="fu">getJSON</span>(<span class="st">&#39;/status&#39;</span>, <span class="kw">function</span>(result) {
+     <span class="co">// result will be an array of JavaScript Objects</span>
+     ...
+   });</code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">[
+  {
+    <span class="dt">name</span>: <span class="st">&#39;JFK - New York, NY&#39;</span>,
+    <span class="dt">status</span>: <span class="st">&#39;Departing Location&#39;</span>
+  },
+  {
+    <span class="dt">name</span>: <span class="st">&#39;DEN - Denver, CO&#39;</span>,
+    <span class="dt">status</span>: <span class="st">&#39;Connecting Flight&#39;</span>
+  },
+  {
+    <span class="dt">name</span>: <span class="st">&#39;SFO - San Francisco, CA&#39;</span>,
+    <span class="dt">status</span>: <span class="st">&#39;Destination&#39;</span>
+  }
+]</code></pre>
+<p>We need a good way to create an array of list item HTML elements from the result of the AJAX call.</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;</span>
+  <span class="kw">&lt;h3&gt;</span>name<span class="kw">&lt;/h3&gt;</span>
+  <span class="kw">&lt;p&gt;</span>status<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;/li&gt;</span>
+
+<span class="kw">&lt;li&gt;</span> ... <span class="kw">&lt;/li&gt;</span>
+
+<span class="kw">&lt;li&gt;</span> ... <span class="kw">&lt;/li&gt;</span></code></pre>
+<p><strong>Utility Method</strong><br /><code>$.map(collection, function(&lt;item&gt;, &lt;index&gt;){});</code></p>
+<p>You can think of a collection as an array.<br />Map returns an array modified by what is returned in the function passed as an argument.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// myNumbers -&gt; [1,2,3,4]</span>
+<span class="kw">var</span> myNumbers = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>];
+<span class="co">// newNumbers -&gt; [2,3,4,5]</span>
+<span class="kw">var</span> newNumbers = <span class="ot">$</span>.<span class="fu">map</span>(myNumbers, <span class="kw">function</span>(item, index){ <span class="kw">return</span> item + <span class="dv">1</span> });</code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">$</span>.<span class="fu">map</span>(result, <span class="kw">function</span>(status, i) {
+  <span class="kw">var</span> listItem = <span class="fu">$</span>(<span class="st">&#39;&lt;li&gt;&lt;/li&gt;&#39;</span>);
+  <span class="fu">$</span>(<span class="st">&#39;&lt;h3&gt;&#39;</span>+<span class="ot">status</span>.<span class="fu">name</span>+<span class="st">&#39;&lt;/h3&gt;&#39;</span>).<span class="fu">appendTo</span>(listItem);
+  <span class="fu">$</span>(<span class="st">&#39;&lt;p&gt;&#39;</span>+<span class="ot">status</span>.<span class="fu">status</span>+<span class="st">&#39;&lt;/p&gt;&#39;</span>).<span class="fu">appendTo</span>(listItem);
+  <span class="kw">return</span> listItem;
+}</code></pre>
+<p>So, the complete code:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.update-flight-status&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="kw">function</span>() {
+   <span class="ot">$</span>.<span class="fu">getJSON</span>(<span class="st">&#39;/status&#39;</span>, <span class="kw">function</span>(result) {
+     <span class="kw">var</span> statusElements = <span class="ot">$</span>.<span class="fu">map</span>(result, <span class="kw">function</span>(status, i) {
+       <span class="kw">var</span> listItem = <span class="fu">$</span>(<span class="st">&#39;&lt;li&gt;&lt;/li&gt;&#39;</span>);
+       <span class="fu">$</span>(<span class="st">&#39;&lt;h3&gt;&#39;</span>+<span class="ot">status</span>.<span class="fu">name</span>+<span class="st">&#39;&lt;/h3&gt;&#39;</span>).<span class="fu">appendTo</span>(listItem);
+       <span class="fu">$</span>(<span class="st">&#39;&lt;p&gt;&#39;</span>+<span class="ot">status</span>.<span class="fu">status</span>+<span class="st">&#39;&lt;/p&gt;&#39;</span>).<span class="fu">appendTo</span>(listItem);
+       <span class="co">// Make sure to return the list item.</span>
+       <span class="kw">return</span> listItem;
+     });
+     <span class="co">// statusElements is an array list items</span>
+     <span class="fu">$</span>(<span class="st">&#39;.status-list&#39;</span>).<span class="fu">html</span>(statusElements);
+   });
+});</code></pre>
+<h2 id="each-vs-.map">$.each vs $.map</h2>
+<p>So what’s the difference between $.each and $.map?</p>
+<ul>
+<li><code>$.each</code> runs the function for each item in the array, but returns the original array unchanged.</li>
+<li><code>$.map</code> runs the function for each item in the array and creates a new array from the returned results.</li>
+</ul>
+<h2 id="give-the-dom-a-break-with-.detach">Give the DOM a break with .detach()</h2>
+<p><strong>Utility Method</strong><br /><code>detach()</code></p>
+<p>Removes an element from the DOM, preserving all data and events.<br />This is useful to minimize DOM insertions with multiple html elements.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(<span class="st">&#39;.update-flight-status&#39;</span>).<span class="fu">on</span>(<span class="st">&#39;click&#39;</span>, <span class="kw">function</span>() {
+   <span class="ot">$</span>.<span class="fu">getJSON</span>(<span class="st">&#39;/status&#39;</span>, <span class="kw">function</span>(result) {
+     ...
+   });
+
+    <span class="co">// .detach() removes the list from the DOM,   </span>
+    <span class="co">// then it can be modified and reinserted into the status element.</span>
+    <span class="fu">$</span>(<span class="st">&#39;.status-list&#39;</span>).<span class="fu">detach</span>()
+                      .<span class="fu">html</span>(statusElements)
+                      .<span class="fu">appendTo</span>(<span class="st">&#39;.status&#39;</span>);
+   });
+
+});</code></pre>
+</article>
+
+<article title="Advanced Events">
+
+<h1 id="chapter-8-advanced-events">Chapter 8: Advanced Events</h1>
+</article>
+
+<script type="text/javascript" src="../../../../../../ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+
+</body>
+</html>
